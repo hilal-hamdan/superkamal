@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="he" dir="rtl">
+<head>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/print.css" media="print">
+    <meta charset="UTF-8">
+    <title th:text="${discount.id == null ? 'הוספת מבצע' : 'עריכת מבצע'}"></title>
+    <script>
+        function toggleFields() {
+            const type = document.getElementById("type").value;
+            document.getElementById("priceDropFields").style.display = type === "PRICE_DROP" ? "block" : "none";
+            document.getElementById("bundleFields").style.display = type === "BUNDLE" ? "block" : "none";
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            toggleFields();
+            document.getElementById("type").addEventListener("change", toggleFields);
+        });
+    </script>
+
+</head>
+<body>
+<div class="container">
+
+<h2 th:text="${discount.id == null ? 'הוספת מבצע' : 'עריכת מבצע'}"></h2>
+
+<!-- טופס חיפוש לפי ברקוד -->
+<form th:action="@{/discounts/find}" method="get">
+    <label>חפש לפי ברקוד:</label>
+    <input type="text" name="barcode" placeholder="הכנס ברקוד" required />
+    <button type="submit">חפש</button>
+</form>
+
+<hr/>
+
+<!-- הודעה אם אין מבצע קיים -->
+<div th:if="${discount.id == null and discount.barcode != null}">
+    <p style="color:blue;">אין מבצע קיים עבור מוצר זה. אתה יכול להזין מבצע חדש.</p>
+</div>
+
+<!-- פרטי מוצר -->
+<div th:if="${product != null}">
+    <p><strong>שם מוצר:</strong> <span th:text="${product.name}"></span></p>
+    <p><strong>מחיר רגיל:</strong> ₪<span th:text="${#numbers.formatDecimal(product.price, 1, 2)}"></span></p>
+</div>
+<div th:if="${product == null and discount.barcode != null}">
+    <p style="color:red;">⚠️ לא נמצא מוצר עם הברקוד הזה</p>
+</div>
+
+<!-- טופס עריכת/הוספת מבצע -->
+<form th:action="@{/discounts/save}" method="post" th:object="${discount}">
+    <input type="hidden" th:field="*{id}" />
+
+    <!-- תצוגה בלב  ד -->
+    <label>ברקוד:</label>
+    <span th:text="${discount.barcode}"></span><br/>
+
+    <!-- שדה חבוי לשליחה -->
+    <input type="hidden" th:field="*{barcode}" />
+
+
+    <label>סוג מבצע:</label>
+    <select id="type" th:field="*{type}">
+        <option th:each="type : ${types}" th:value="${type}" th:text="${type}"></option>
+    </select><br/>
+
+    <!-- שדות למחיר חדש -->
+    <div id="priceDropFields">
+        <label>מחיר יחידה חדש:</label>
+        <input type="number" step="0.01" th:field="*{newUnitPrice}" /><br/>
+    </div>
+
+    <!-- שדות לחבילה -->
+    <div id="bundleFields">
+        <label>כמות בחבילה:</label>
+        <input type="number" th:field="*{bundleQuantity}" /><br/>
+
+        <label>מחיר חבילה:</label>
+        <input type="number" step="0.01" th:field="*{bundlePrice}" /><br/>
+    </div>
+
+    <button type="submit">שמור</button>
+</form>
+
+<p><a href="/discounts">חזרה לרשימת מבצעים</a></p>
+</div>
+</body>
+</html>

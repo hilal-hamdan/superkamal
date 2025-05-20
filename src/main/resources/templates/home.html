@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>סופרקמל - דף הבית</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/print.css" media="print">
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const input = document.getElementById("barcodeInput");
+            if (input) {
+                input.focus();
+                input.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        document.getElementById("barcodeForm").submit();
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="sidebar">
+    <h1 style="color: white">סופרקמל</h1>
+    <a href="/manageProducts">ניהול מוצרים</a>
+    <a href="/discounts">ניהול מבצעים</a>
+</div>
+
+<div class="main">
+    <h2>רכישת לקוח</h2>
+
+    <form id="barcodeForm" th:action="@{/purchase/add}" method="post">
+        <label>ברקוד:</label>
+        <input type="text" id="barcodeInput" name="barcode" required />
+    </form>
+
+    <h3>סל רכישה נוכחי</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>כמות</th>
+            <th>שם</th>
+            <th>מחיר</th>
+            <th>סה‏"‏כ</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${cart.items}">
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.product.name}"></td>
+
+            <td>
+                <span th:if="${item.discountApplied}" class="strikethrough">
+                    ₪ <span th:text="${#numbers.formatDecimal(item.originalPrice / item.quantity, 1, 2)}"></span>
+                </span>
+                <span th:text="'₪' + ${#numbers.formatDecimal(item.totalPrice / item.quantity, 1, 2)}"></span>
+                <span th:if="${item.discountApplied}" th:text="' (' + ${item.discountDescription} + ')'"> </span>
+            </td>
+
+            <td>
+                <span th:if="${item.discountApplied}" class="strikethrough">
+                    ₪ <span th:text="${#numbers.formatDecimal(item.originalPrice, 1, 2)}"></span>
+                </span>
+                <span th:text="'₪' + ${#numbers.formatDecimal(item.totalPrice, 1, 2)}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p><strong>סה״כ לתשלום:</strong> ₪ <span th:text="${#numbers.formatDecimal(cart.total, 1, 2)}"></span></p>
+    <div class="form-actions space-between">
+    <form th:action="@{/purchase/clear}" method="post">
+        <button type="submit">נקה סל</button>
+    </form>
+
+    <button onclick="window.print()">הדפס</button>
+
+    </div>
+</div>
+</body>
+</html>

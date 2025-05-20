@@ -1,0 +1,163 @@
+/* עיצוב בסיסי */
+body {
+    font-family: Arial, sans-serif;
+    direction: rtl;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+}
+
+/* סרגל צד */
+.sidebar {
+    width: 220px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    flex-shrink: 0;
+}   
+
+.sidebar h1 {
+    font-size: 22px;
+    margin-bottom: 30px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 10px 0;
+    margin: 10px 0;
+    background-color: #34495e;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.sidebar a:hover {
+    background-color: #1abc9c;
+}
+
+/* תוכן ראשי */
+.main {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+}
+
+/* כותרות */
+h1, h2, h3 {
+    color: #2c3e50;
+    text-align: center;
+}
+
+/* טופס ממורכז */
+.container {
+    /*max-width: 700px;*/
+    margin: 0 auto;
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.form-box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+    padding: 10px 12px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* טבלה */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+}
+
+/* כפתורים */
+button, .btn, .link-button {
+    padding: 12px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    min-width: 50px;
+    height: 50px;
+}
+
+button:hover, .btn:hover, .link-button:hover {
+    background-color: #2980b9;
+}
+
+.link-button {
+    background-color: #95a5a6;
+}
+
+.link-button:hover {
+    background-color: #7f8c8d;
+}
+
+/* כפתורים משולבים */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+/* קווים חוצים */
+.strikethrough {
+    text-decoration: line-through;
+    color: #999;
+}
+.form-actions.space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+}

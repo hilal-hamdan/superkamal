@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ניהול מבצעים</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/print.css" media="print">
+</head>
+<body>
+<div class="container">
+
+<h2>רשימת מבצעים</h2>
+<p><a href="/discounts/add">הוסף מבצע חדש</a></p>
+<p><a href="/">חזרה לדף הבית</a></p>
+
+<table>
+    <thead>
+    <tr>
+        <th>ברקוד</th>
+        <th>שם מוצר</th>
+        <th>סוג</th>
+        <th>מחיר חדש</th>
+        <th>כמות בחבילה</th>
+        <th>מחיר חבילה</th>
+        <th>פעולות</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="discount : ${discounts}">
+        <td th:text="${discount.barcode}"></td>
+        <td th:text="${barcodeToName[discount.barcode]}">מוצר</td>
+        <td th:text="${discount.type}"></td>
+        <td th:text="${discount.newUnitPrice}"></td>
+        <td th:text="${discount.bundleQuantity}"></td>
+        <td th:text="${discount.bundlePrice}"></td>
+        <td>
+            <a th:href="@{'/discounts/edit/' + ${discount.id}}">ערוך</a> |
+            <a th:href="@{'/discounts/delete/' + ${discount.id}}" onclick="return confirm('למחוק?')">מחק</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</div>
+</body>
+</html>
