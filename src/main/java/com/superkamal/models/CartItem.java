@@ -1,5 +1,6 @@
 package com.superkamal.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
+    @JsonIgnore // ⬅⬅⬅ הוספה חשובה כדי למנוע ריקורסיה
     private Cart cart;
 
     @ManyToOne
@@ -21,7 +23,6 @@ public class CartItem {
     private Product product;
 
     private int quantity;
-
     private double totalPrice;
 
     @Transient

@@ -1,5 +1,6 @@
 package com.superkamal.service;
 
+import com.superkamal.dto.CartItemDTO;
 import com.superkamal.models.*;
 import com.superkamal.repositories.CartRepository;
 import com.superkamal.repositories.DiscountRepository;
@@ -7,7 +8,9 @@ import com.superkamal.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -104,6 +107,7 @@ public class CartService {
         if (activeCart != null) {
             activeCart.getItems().clear();
             activeCart.setTotal(0);
+
             cartRepository.save(activeCart);
         }
     }
@@ -111,4 +115,22 @@ public class CartService {
     public Cart getCurrentCart() {
         return getActiveCart();
     }
+
+    public CartItemDTO mapToDTO(CartItem item) {
+        return new CartItemDTO(
+                item.getProduct().getName(),
+                item.getQuantity(),
+                item.getTotalPrice()
+        );
+    }
+
+    public List<CartItemDTO> getCartItemDTOs() {
+        return getActiveCart().getItems().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
+
 }

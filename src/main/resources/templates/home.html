@@ -18,6 +18,10 @@
                 });
             }
         });
+
+        function confirmClear() {
+            return confirm("האם אתה בטוח שברצונך לנקות את הסל?");
+        }
     </script>
 </head>
 <body>
@@ -70,13 +74,17 @@
 
     <p><strong>סה״כ לתשלום:</strong> ₪ <span th:text="${#numbers.formatDecimal(cart.total, 1, 2)}"></span></p>
     <div class="form-actions space-between">
-    <form th:action="@{/purchase/clear}" method="post">
-        <button type="submit">נקה סל</button>
-    </form>
+        <form th:action="@{/purchase/clear}" method="post" onsubmit="return confirmClear();">
+            <button type="submit">נקה סל</button>
+        </form>
 
-    <button onclick="window.print()">הדפס</button>
+        <button onclick="window.print()">הדפס</button>
 
+        <form th:action="@{/purchase/view}" method="get">
+            <button type="submit">מעבר לתצוגת לקוח</button>
+        </form>
     </div>
+
 </div>
 </body>
 </html>
