@@ -15,11 +15,17 @@
 <main class="main">
     <h2>רשימת מבצעים</h2>
 
+    <!-- הודעה על הצלחה -->
+    <div th:if="${message}" th:class="'alert ' + ${alert}">
+        <p th:text="${message}"></p>
+    </div>
+
     <div class="form-actions space-between">
         <a class="btn link-button" href="/discounts/add">הוסף מבצע חדש</a>
         <a class="btn link-button" href="/">חזרה לדף הבית</a>
     </div>
 
+    <!-- טבלת מבצעים -->
     <table>
         <thead>
         <tr>
@@ -48,6 +54,7 @@
         </tbody>
     </table>
 </main>
+
 
 </body>
 </html>

@@ -1,4 +1,3 @@
-// Updated DiscountController.java
 package com.superkamal.controllers;
 
 import com.superkamal.models.Discount;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,21 +40,55 @@ public class DiscountController {
         }
         model.addAttribute("barcodeToName", barcodeToName);
 
+        // בדיקת הודעת פלאש
+        if (model.containsAttribute("createSuccess")) {
+            model.addAttribute("message", "✅ מבצע חדש נוסף בהצלחה");
+            model.addAttribute("alert", "success");
+        } else if (model.containsAttribute("updateSuccess")) {
+            model.addAttribute("message", "✅ מבצע עודכן בהצלחה");
+            model.addAttribute("alert", "success");
+        }
+
         return "discounts";
     }
 
     @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("discount", new Discount());
+    public String showAddForm(Model model,
+                              @RequestParam(required = false) String barcode) {
+        Discount discount = new Discount();
+        if (barcode != null) {
+            discount.setBarcode(barcode);
+        }
+        model.addAttribute("discount", discount);
         model.addAttribute("types", DiscountType.values());
         return "add-edit-discount";
     }
 
     @PostMapping("/save")
-    public String saveDiscount(@ModelAttribute Discount discount) {
+    public String saveDiscount(@ModelAttribute Discount discount,
+                               RedirectAttributes redirectAttributes,
+                               Model model) {
+
+        // בדוק אם יש מוצר תואם
+        Product product = productService.getProductByBarcode(discount.getBarcode());
+        if (product == null) {
+            redirectAttributes.addFlashAttribute("message", "⚠️ לא ניתן לשמור מבצע – לא קיים מוצר עם ברקוד זה");
+            redirectAttributes.addFlashAttribute("alert", "error");
+            return "redirect:/discounts";
+        }
+
+        boolean isUpdate = (discount.getId() != null);
         discountService.prepareAndSaveDiscount(discount);
+
+        if (isUpdate) {
+            redirectAttributes.addFlashAttribute("updateSuccess", true);
+        } else {
+            redirectAttributes.addFlashAttribute("createSuccess", true);
+        }
+
         return "redirect:/discounts";
     }
+
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
