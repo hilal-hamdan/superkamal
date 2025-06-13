@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>סופרקמל - דף הבית</title>
+    <title>סופרקמאל - דף הבית</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/print.css" media="print">
     <script>
@@ -25,13 +26,11 @@
     </script>
 </head>
 <body>
-<div class="sidebar">
-    <h1 style="color: white">סופרקמל</h1>
-    <a href="/manageProducts">ניהול מוצרים</a>
-    <a href="/discounts">ניהול מבצעים</a>
-</div>
 
-<div class="main">
+<div th:replace="fragments/header :: header"></div>
+
+
+<main class="main">
     <h2>רכישת לקוח</h2>
 
     <form id="barcodeForm" th:action="@{/purchase/add}" method="post">
@@ -46,25 +45,23 @@
             <th>כמות</th>
             <th>שם</th>
             <th>מחיר</th>
-            <th>סה‏"‏כ</th>
+            <th>סה"כ</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="item : ${cart.items}">
             <td th:text="${item.quantity}"></td>
             <td th:text="${item.product.name}"></td>
-
             <td>
                 <span th:if="${item.discountApplied}" class="strikethrough">
-                    ₪ <span th:text="${#numbers.formatDecimal(item.originalPrice / item.quantity, 1, 2)}"></span>
+                    ₪<span th:text="${#numbers.formatDecimal(item.originalPrice / item.quantity, 1, 2)}"></span>
                 </span>
                 <span th:text="'₪' + ${#numbers.formatDecimal(item.totalPrice / item.quantity, 1, 2)}"></span>
-                <span th:if="${item.discountApplied}" th:text="' (' + ${item.discountDescription} + ')'"> </span>
+                <span th:if="${item.discountApplied}" th:text="' (' + ${item.discountDescription} + ')'"></span>
             </td>
-
             <td>
                 <span th:if="${item.discountApplied}" class="strikethrough">
-                    ₪ <span th:text="${#numbers.formatDecimal(item.originalPrice, 1, 2)}"></span>
+                    ₪<span th:text="${#numbers.formatDecimal(item.originalPrice, 1, 2)}"></span>
                 </span>
                 <span th:text="'₪' + ${#numbers.formatDecimal(item.totalPrice, 1, 2)}"></span>
             </td>
@@ -73,18 +70,17 @@
     </table>
 
     <p><strong>סה״כ לתשלום:</strong> ₪ <span th:text="${#numbers.formatDecimal(cart.total, 1, 2)}"></span></p>
+
     <div class="form-actions space-between">
         <form th:action="@{/purchase/clear}" method="post" onsubmit="return confirmClear();">
             <button type="submit">נקה סל</button>
         </form>
-
         <button onclick="window.print()">הדפס</button>
-
         <form th:action="@{/purchase/view}" method="get">
             <button type="submit">מעבר לתצוגת לקוח</button>
         </form>
     </div>
+</main>
 
-</div>
 </body>
 </html>

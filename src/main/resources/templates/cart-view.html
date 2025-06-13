@@ -1,36 +1,106 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>חשבון הלקוח</title>
+    <title>תצוגת לקוח</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/print.css" media="print">
+
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 </head>
 <body>
-<h2>המוצרים שנסרקו</h2>
-<ul id="cart-items"></ul>
+<div class="main container">
+    <h2>רכישה נוכחית</h2>
+
+    <table id="cart-table">
+        <thead>
+        <tr>
+            <th>כמות</th>
+            <th>שם</th>
+            <th>מחיר</th>
+            <th>סה"כ</th>
+        </tr>
+        </thead>
+        <tbody id="cart-body">
+        <!-- יתמלא בזמן אמת -->
+        </tbody>
+    </table>
+
+    <p style="margin-top: 20px; font-size: 20px;"><strong>סה״כ לתשלום:</strong> ₪ <span id="total-amount">0.00</span></p>
+</div>
 
 <script>
     const socket = new SockJS('/ws');
     const stompClient = Stomp.over(socket);
 
     stompClient.connect({}, function () {
+        console.log("🔌 WebSocket connected");
+
         stompClient.subscribe('/topic/cart', function (message) {
+            try {
+                const items = JSON.parse(message.body);
+                console.log("📦 Received cart items:", items);
 
-            // ✅ הדפס את גוף ההודעה לפני שמנסים לפענח
-            console.log("📨 Raw message:", message.body);
+                const tbody = document.getElementById('cart-body');
+                const totalEl = document.getElementById('total-amount');
+                tbody.innerHTML = '';
 
-            const items = JSON.parse(message.body);
-            const list = document.getElementById('cart-items');
-            list.innerHTML = '';
+                let total = 0;
 
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = `${item.productName} × ${item.quantity} = ₪${item.totalPrice}`;
-                list.appendChild(li);
-            });
+                items.forEach(item => {
+                    const tr = document.createElement('tr');
 
+                    // כמות
+                    const quantityTd = document.createElement('td');
+                    quantityTd.textContent = item.quantity;
+
+                    // שם מוצר
+                    const nameTd = document.createElement('td');
+                    nameTd.textContent = item.productName;
+
+                    // מחיר יחידה (עם/בלי מבצע)
+                    const priceTd = document.createElement('td');
+                    if (item.discountApplied) {
+                        priceTd.innerHTML = `
+                            <span class="strikethrough">₪${(item.originalPrice / item.quantity).toFixed(2)}</span>
+                            ₪${(item.totalPrice / item.quantity).toFixed(2)}
+                            <span>(${item.discountDescription})</span>
+                        `;
+                    } else {
+                        priceTd.textContent = `₪${(item.totalPrice / item.quantity).toFixed(2)}`;
+                    }
+
+                    // מחיר כולל
+                    const totalTd = document.createElement('td');
+                    if (item.discountApplied) {
+                        totalTd.innerHTML = `
+                            <span class="strikethrough">₪${item.originalPrice.toFixed(2)}</span>
+                            ₪${item.totalPrice.toFixed(2)}
+                        `;
+                    } else {
+                        totalTd.textContent = `₪${item.totalPrice.toFixed(2)}`;
+                    }
+
+                    total += item.totalPrice;
+
+                    tr.appendChild(quantityTd);
+                    tr.appendChild(nameTd);
+                    tr.appendChild(priceTd);
+                    tr.appendChild(totalTd);
+
+                    tbody.appendChild(tr);
+                });
+
+                totalEl.textContent = total.toFixed(2);
+
+            } catch (e) {
+                console.error("❌ Failed to parse WebSocket message", e);
+                console.log("📄 Raw message body:", message.body);
+            }
         });
+    }, function (err) {
+        console.error("❌ WebSocket connection error", err);
     });
 </script>
 

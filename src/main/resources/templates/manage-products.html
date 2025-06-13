@@ -5,41 +5,35 @@
     <title>ניהול מוצרים</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/print.css" media="print">
-
-    <script>
-        function goToEdit() {
-            const barcode = document.getElementById("barcodeInput").value;
-            if (barcode) {
-                window.location.href = `/editProduct/${barcode}`;
-            }
-        }
-    </script>
 </head>
 <body>
-<div class="container">
-    <h2>ניהול מוצרים</h2>
 
-    <div class="form-actions space-between">
-        <a class="btn link-button" href="/products">הצגת כל המוצרים</a>
-        <a class="btn" href="/addProduct">הוספת מוצר חדש</a>
+<div th:replace="fragments/header :: header"></div>
+
+<main class="main">
+    <h2 style="text-align: center;">ניהול מוצרים</h2>
+
+    <div th:if="${errorMessage}">
+        <p style="color: red;" th:text="${errorMessage}"></p>
     </div>
 
-    <form class="form-box" th:action="@{/editProduct/__barcode__}" method="get" onsubmit="event.preventDefault(); goToEdit();">
-
+    <!-- טופס להפניה לעמוד עריכה -->
+    <form th:action="@{/editProduct}" method="get" class="form-box">
         <div class="form-group">
-            <label>עדכון מוצר לפי ברקוד:</label>
-            <input type="text" id="barcodeInput" placeholder="הזן ברקוד" required />
+            <label for="barcode">עדכון מוצר לפי ברקוד:</label>
+            <input type="text" id="barcode" name="barcode" placeholder="הזן ברקוד" required />
         </div>
         <div class="form-actions">
             <button type="submit" class="btn">ערוך</button>
         </div>
     </form>
 
-    <div class="form-actions">
+    <div class="form-actions space-between">
+        <a class="btn link-button" href="/products">הצגת כל המוצרים</a>
+        <a class="btn link-button" href="/addProduct">הוספת מוצר חדש</a>
         <a class="btn link-button" href="/">חזרה לעמוד הבית</a>
     </div>
-</div>
+</main>
 
 </body>
-
 </html>

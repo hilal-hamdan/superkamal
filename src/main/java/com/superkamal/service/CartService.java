@@ -116,6 +116,12 @@ public class CartService {
         return getActiveCart();
     }
 
+    public List<CartItemDTO> getCartItemDTOs() {
+        return getActiveCart().getItems().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     public CartItemDTO mapToDTO(CartItem item) {
         return new CartItemDTO(
                 item.getProduct().getName(),
@@ -124,11 +130,6 @@ public class CartService {
         );
     }
 
-    public List<CartItemDTO> getCartItemDTOs() {
-        return getActiveCart().getItems().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
 
 
 
